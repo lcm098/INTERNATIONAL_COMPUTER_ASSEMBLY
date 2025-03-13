@@ -1,0 +1,9 @@
+
+section .text ||
+
+    mov ras, 34
+    mov rbs, 12
+    mov rcs, 'C'
+    mov rds, "Danishk"
+
+||
