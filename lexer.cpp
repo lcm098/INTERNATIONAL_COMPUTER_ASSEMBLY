@@ -486,14 +486,3 @@ public:
         report_error(line, "Unterminated multiline comment.");
     }
 };
-
-int main() {
-    // Example usage
-    std::string code = "section .text: section .bss: mov rax_var, 10";
-    Lexer lexer(code);
-    std::vector<Token> tokens = lexer.scan_tokens();
-    for (const auto& token : tokens) {
-        std::cout << token.repr() << std::endl;
-    }
-    return 0;
-}
