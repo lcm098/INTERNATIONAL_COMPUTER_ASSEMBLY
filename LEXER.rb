@@ -16,6 +16,9 @@ STORE = "STORE"
 UNLOAD = "ULOAD"
 UNSTORE = "USTORE"
 FIPTR = "FIPTR"
+INC = "INC" 
+DEC = "DEC"
+LOOP = "LOOP"
 RAS_PTR = "RAS_PTR"
 RAS = "RAS"
 RBS = "RBS"
@@ -58,6 +61,7 @@ INT = "INT"
 CHAR = "CHAR"
 IDENTIFIER = "IDENTIFIER"
 CMD_ACTIVATION = "CMD_ACTIVATION"
+ADDRESS_OF_OPERATOR = "ADDRESS_OF_OPERATOR"
 EOF = "EOF"  # Added missing EOF token type
 
 TOKEN_TYPES = [
@@ -66,13 +70,17 @@ TOKEN_TYPES = [
     RAS_PTR, RAS, RBS, RBS_PTR, RCS, RCS_PTR, RDS, RDS_PTR, REX, REX_PTR,
     DD, DL, DR, DA, COLON, COMMA, DOT, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE,
     RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, SECTION, GLOBAL, EXTERN, PUBLIC,
-    TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR
+    TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR, INC, DEC, LOOP,
+    ADDRESS_OF_OPERATOR
 ]
 
 KEYWORDS = {
     "call" => CALL,
     "mov" => MOV,
     "fiptr" => FIPTR,
+    "inc" => INC,
+    "dec" => DEC,
+    "loop" => LOOP,
     "add" => ADD,
     "sub" => SUB,
     "mul" => MUL,
@@ -295,7 +303,8 @@ class Lexer
             else
                 add_token("|")  # Handle single pipe case
             end
-        
+        when '&'
+            add_token()
         when '('
             add_token(LEFT_PAREN)
         when ')'
