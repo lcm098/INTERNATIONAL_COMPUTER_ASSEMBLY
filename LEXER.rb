@@ -64,6 +64,8 @@ NIL = "NIL"
 PUSHA = "PUSHA"
 POPA = "POPA"
 CLSV = "CLSV" # clear variable
+LINK = "LINK"
+IS = "IS"
 EOF = "EOF"  # Added missing EOF token type
 
 TOKEN_TYPES = [
@@ -73,7 +75,7 @@ TOKEN_TYPES = [
     RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, SECTION, GLOBAL, EXTERN, PUBLIC,
     TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR, INC, DEC, LOOP,
     ADDRESS_OF_OPERATOR, CONDITIONAL_AND, BANG, CONDITIONAL_OR, BANG_EQUAL, EQUAL_EQUAL,
-    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV
+    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV, LINK, IS
 ]
 
 KEYWORDS = {
@@ -85,6 +87,8 @@ KEYWORDS = {
     "popa" => POPA,
     "clsv" => CLSV,
     "dec" => DEC,
+    "is" => IS,
+    "link" => LINK,
     "true" => TRUE,
     "false" => FALSE,
     "nil" => NIL,
