@@ -14,7 +14,8 @@ STORE = "STORE"
 UNLOAD = "ULOAD"
 UNSTORE = "USTORE"
 FIPTR = "FIPTR"
-INC = "INC" 
+INC = "INC"
+GET = "GET"
 DEC = "DEC"
 LOOP = "LOOP"
 COLON = "COLON"
@@ -65,7 +66,10 @@ CLSV = "CLSV" # clear variable
 LINK = "LINK"
 IS = "IS"
 ARRAY_GROUP_OPERATOR = "ARRAY_GROUP_OPERATOR"
+INVOKE =  "INVOKE"
 EOF = "EOF"  # Added missing EOF token type
+SET = "SET"
+INJECT = "INJECT"
 
 TOKEN_TYPES = [
     MOV, ADD, SUB, MUL, DIV, MOD, CMP, JMP,
@@ -74,18 +78,21 @@ TOKEN_TYPES = [
     RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, SECTION, GLOBAL, EXTERN, PUBLIC,
     TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR, INC, DEC, LOOP,
     ADDRESS_OF_OPERATOR, CONDITIONAL_AND, BANG, CONDITIONAL_OR, BANG_EQUAL, EQUAL_EQUAL,
-    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV, LINK, IS, ARRAY_GROUP_OPERATOR
+    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV, LINK, IS, ARRAY_GROUP_OPERATOR,
+    INVOKE, SET, GET, INJECT
 ]
 
 KEYWORDS = {
     "call" => CALL,
     "mov" => MOV,
     "fiptr" => FIPTR,
+    "inject" => INJECT
     "inc" => INC,
     "pusha" => PUSHA,
     "popa" => POPA,
     "clsv" => CLSV,
     "dec" => DEC,
+    "get" => GET,
     "is" => IS,
     "link" => LINK,
     "true" => TRUE,
@@ -99,6 +106,8 @@ KEYWORDS = {
     "mod" => MOD,
     "cmp" => CMP,
     "jmp" => JMP,
+    "invoke" => INVOKE
+    "set" => SET,
     
     "push" => PUSH,
     "pop" => POP,

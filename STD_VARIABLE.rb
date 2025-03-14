@@ -19,6 +19,9 @@ class SpecialVariablesAndPointers
   EGX_RES = "egx_rex" # used to resolve value at address
   EHX_RES = "ehx_rex" # used to resolve value at address
 
+  # special pointer for data structure
+  DSPTR = "dsptr"
+
   # pointer variable
   FPTR = "fptr"
   VPTR = "vptr"
