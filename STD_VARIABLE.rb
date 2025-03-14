@@ -1,4 +1,6 @@
 class SpecialVariablesAndPointers
+
+  # General Special Variable
   RAS_PTR = "ras_ptr"
   RAS = "ras"
   RBS = "rbs"
@@ -9,6 +11,7 @@ class SpecialVariablesAndPointers
   RDS_PTR = "rds_ptr"
   REX = "rex"
   REX_PTR = "rex_ptr"
+
   ECX_RES = "ecx_res" # used to resolve value at address
   EDX_RES = "edx_rex" # used to resolve value at address
   EEX_RES = "eex_res" # used to resolve value at address
@@ -16,11 +19,14 @@ class SpecialVariablesAndPointers
   EGX_RES = "egx_rex" # used to resolve value at address
   EHX_RES = "ehx_rex" # used to resolve value at address
 
+  # pointer variable
   FPTR = "fptr"
   VPTR = "vptr"
 
+  # track variable
   RDO_VAR = "rdo_var"
 
+  # FOR CREATING LIST, ARRAY, DICT, RAW VARIABLE
   DD = "dd"
   DL = "dl"
   DR = "dr"
