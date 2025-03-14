@@ -19,20 +19,6 @@ FIPTR = "FIPTR"
 INC = "INC" 
 DEC = "DEC"
 LOOP = "LOOP"
-RAS_PTR = "RAS_PTR"
-RAS = "RAS"
-RBS = "RBS"
-RBS_PTR = "RBS_PTR"
-RCS = "RCS"
-RCS_PTR = "RCS_PTR"
-RDS = "RDS"
-RDS_PTR = "RDS_PTR"
-REX = "REX"
-REX_PTR = "REX_PTR"
-DD = "DD"
-DL = "DL"
-DR = "DR"
-DA = "DA"
 COLON = "COLON"
 COMMA = "COMMA"
 DOT = "DOT"
@@ -43,6 +29,9 @@ RIGHT_BRACE = "RIGHT_BRACE"
 LEFT_BRACKET = "LEFT_BRACKET"
 RIGHT_BRACKET = "RIGHT_BRACKET"
 SECTION = "SECTION"
+CONDITIONAL_AND = "CONDITIONAL_AND"
+BANG =  "BANG"
+CONDITIONAL_OR = "CONDITIONAL_OR"
 GLOBAL = "GLOBAL"
 EXTERN = "EXTERN"
 PUBLIC = "PUBLIC"
@@ -62,16 +51,29 @@ CHAR = "CHAR"
 IDENTIFIER = "IDENTIFIER"
 CMD_ACTIVATION = "CMD_ACTIVATION"
 ADDRESS_OF_OPERATOR = "ADDRESS_OF_OPERATOR"
+BANG_EQUAL = "BANG_EQUAL"
+EQUAL_EQUAL = "EQUAL_EQUAL"
+DATA_EQUAL = "DATA_EQUAL"
+GREATER = "GREATER"
+LESS = "LESS"
+GREATER_EQUAL = "GREATER_EQUAL"
+LESS_EQUAL = "LESS_EQUAL"
+TRUE = "TRUE"
+FALSE = "FALSE"
+NIL = "NIL"
+PUSHA = "PUSHA"
+POPA = "POPA"
+CLSV = "CLSV" # clear variable
 EOF = "EOF"  # Added missing EOF token type
 
 TOKEN_TYPES = [
     MOV, ADD, SUB, MUL, DIV, MOD, CMP, JMP,
     CALL, FPTR, PUSH, POP, VPTR, LOAD, STORE, UNLOAD, UNSTORE,
-    RAS_PTR, RAS, RBS, RBS_PTR, RCS, RCS_PTR, RDS, RDS_PTR, REX, REX_PTR,
-    DD, DL, DR, DA, COLON, COMMA, DOT, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE,
+    COLON, COMMA, DOT, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE,
     RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, SECTION, GLOBAL, EXTERN, PUBLIC,
     TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR, INC, DEC, LOOP,
-    ADDRESS_OF_OPERATOR
+    ADDRESS_OF_OPERATOR, CONDITIONAL_AND, BANG, CONDITIONAL_OR, BANG_EQUAL, EQUAL_EQUAL,
+    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV
 ]
 
 KEYWORDS = {
@@ -79,7 +81,13 @@ KEYWORDS = {
     "mov" => MOV,
     "fiptr" => FIPTR,
     "inc" => INC,
+    "pusha" => PUSHA,
+    "popa" => POPA,
+    "clsv" => CLSV,
     "dec" => DEC,
+    "true" => TRUE,
+    "false" => FALSE,
+    "nil" => NIL,
     "loop" => LOOP,
     "add" => ADD,
     "sub" => SUB,
@@ -94,22 +102,8 @@ KEYWORDS = {
     "vptr" => VPTR,
     "load" => LOAD,
     "store" => STORE,
-    "unload" => ULOAD,
-    "unstore" => USTORE,
-    "ras_ptr" => RAS_PTR,
-    "ras" => RAS,
-    "rbs" => RBS,
-    "rbs_ptr" => RBS_PTR,
-    "rcs" => RCS,
-    "rcs_ptr" => RCS_PTR,
-    "rds" => RDS,
-    "rds_ptr" => RDS_PTR,
-    "rex" => REX,
-    "rex_ptr" => REX_PTR,
-    "dd" => DD,
-    "dl" => DL,
-    "dr" => DR,
-    "da" => DA,
+    "unload" => UNLOAD,
+    "unstore" => UNSTORE,
     "section" => SECTION,
     "global" => GLOBAL,
     "extern" => EXTERN,
@@ -301,10 +295,43 @@ class Lexer
             if match("|")
                 add_token(DOUBLE_OR)
             else
-                add_token("|")  # Handle single pipe case
+                add_token(CONDITIONAL_OR)  # Handle single pipe case
             end
-        when '&'
-            add_token()
+        when "!"
+            if match("=")
+                add_token(BANG_EQUAL)
+            else
+                add_token(BANG)
+            end
+        when "="
+            if match("=")
+                if match("=")
+                    add_token(DATA_EQUAL)
+                else
+                    add_token(EQUAL_EQUAL)
+                end
+            end
+
+        when ">"
+            if match("=")
+                add_token(GREATER_EQUAL)
+            else
+                add_token(GREATER)
+            end
+
+        when "<"
+            if match("=")
+                add_token(LESS_EQUAL)
+            else
+                add_token(LESS)
+            end
+
+        when "&"
+            if match("&")
+                add_token(ADDRESS_OF_OPERATOR)
+            else
+                add_token(CONDITIONAL_AND)
+            end
         when '('
             add_token(LEFT_PAREN)
         when ')'

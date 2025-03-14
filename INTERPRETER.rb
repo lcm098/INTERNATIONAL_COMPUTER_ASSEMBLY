@@ -64,10 +64,26 @@ class ExprVisitor
   
     def initialize
       @environment = Environment.new()
+      @data_buff_type = SpecialVariablesAndPointers.new()
+      SpecialVariablesAndPointers.data_buffer_type.each do |item|
+        @environment.define(item, 0, false)
+      end
     end
   
     # Interpreter for evaluating expressions. Implements the visitor methods.
-  
+    
+    def visit_data_seek(inst)
+      @data_buff_type = SpecialVariablesAndPointers.new()
+      special_var = inst.special_variable_type.lexeme
+      special_val = inst.value
+
+      if SpecialVariablesAndPointers.data_buffer_type.include?(special_var)
+        @environment.assign(special_var, special_val)
+      else
+        raise "Using unregistered special variable named '#{special_var}' why?\n\t On Line =[#{inst.line}]"
+      end
+    end
+
     def visit_unknown_block(expr)
       execute_block(expr.block, Environment.new(@environment))
     end
@@ -154,7 +170,7 @@ class ExprVisitor
       when '||'
         left || right
       else
-        raise "Unsupported logical operator: #{expr.operator}"
+        raise "Unsupported logical operator: #{expr.operator} \n\t On Line =[#{expr.operator.line}]"
       end
     end
   
@@ -167,7 +183,7 @@ class ExprVisitor
       when '!'
         !right
       else
-        raise "Unsupported unary operator: #{expr.operator}"
+        raise "Unsupported unary operator: #{expr.operator} \n\t On Line =[#{expr.operator.line}]"
       end
     end
   
@@ -187,7 +203,7 @@ class ExprVisitor
       _command_buffer_ = Shellwords.split(expr.value)
       inter = CmdInter.new(_command_buffer_)
       status = inter.impl
-      "ascii says = [#{status[0]}], with Success Flag=[#{status[1]}]"
+      "ascii says = [#{status[0]}], with Success Flag=[#{status[1]}] \n\t On Line =[#{status[1].line}]"
     end
   
     def interpret(stmt)

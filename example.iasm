@@ -6,4 +6,7 @@ section .text ||
     mov rcs, 'C'
     mov rds, "Danishk"
 
+    mov ras, true
+    mov rbs, false
+    mov rcs, nil
 ||

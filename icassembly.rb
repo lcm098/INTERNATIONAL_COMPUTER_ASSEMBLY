@@ -3,6 +3,7 @@ require_relative 'LEXER'
 require_relative 'PARSER'
 require_relative 'INTERPRETER'
 require_relative 'ENVIRONMENT'
+require_relative 'STD_VARIABLE'
 
 class Main
   def initialize
@@ -18,17 +19,15 @@ class Main
       lexer = Lexer.new(code)
       tokens = lexer.scan_tokens
 
-      puts "Tokens : #{tokens}"
-    #   # Step 2: Parsing (Abstract Syntax Tree Construction)
-    #   parser = Parser.new(tokens)
-    #   statements = parser.parse
+      # Step 2: Parsing (Abstract Syntax Tree Construction)
+      parser = Parser.new(tokens)
+      ast_syntax_tree = parser.parse
 
     #   # Step 3: Interpretation (Execution)
     #   result = @interpreter.interpret(statements)
 
       # Output the result
-      puts "Debug Interpreter Result"
-    #   puts "Result: #{result}"
+      puts ast_syntax_tree
     rescue ThrowError => e
       puts "Error: #{e.message}"
     rescue StandardError => e
