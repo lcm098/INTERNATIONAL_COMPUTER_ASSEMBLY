@@ -176,22 +176,6 @@ class Expr
     end
   end
 
-  class UsingType
-    attr_accessor :value
-
-    def initialize(value)
-      @value = value
-    end
-
-    def to_s
-      "Using(value=#{@value})"
-    end
-
-    def accept(visitor)
-      visitor.visit_using_type_expr(self)
-    end
-  end
-
   class EmptyBlock
     attr_accessor :block
 
@@ -218,11 +202,45 @@ class Expr
     end
 
     def to_s
-      "mov variable-type=#{@special_variable_type.lexeme}, value=#{@value}"
+      "mov #{@special_variable_type.lexeme}, #{@value}"
     end
 
     def accept(visitor)
       visitor.visit_data_seek(self)
+    end
+  end
+
+  class HiddenArrayGrouping
+    attr_accessor :line, :elements
+
+    def initialize(line, elements)
+      @line = line
+      @elements = elements
+    end
+
+    def to_s
+      "HaG(line=#{@line} elements=#{@elements})"
+    end
+
+    def accept(visitor)
+      visitor.visit_hidden_array_grouping(self)
+    end
+  end
+
+  class LoadInstruction
+    attr_accessor :line, :pointer_type, :value
+    def initialize(line, pointer_type, value)
+      @line = line
+      @pointer_type = pointer_type
+      @value = value
+    end
+
+    def to_s
+      "load #{@pointer_type}, #{value}"
+    end
+
+    def accept(visitor)
+      visitor.visit_load_instruction(self)
     end
   end
 end
@@ -287,7 +305,18 @@ class Parser
     if match(MOV)
       return handle_data_to_special_variable
     end
+    if match(LOAD)
+      return handle_load_instruction
+    end
     expression
+  end
+
+  def handle_load_instruction
+    line = peek.line
+    pointer_type = consume(IDENTIFIER, "Expected 'special-pointer' after load")
+    self.consume(COMMA, "Expected ',' after 'load something, something'")
+    value = expression()
+    Expr::LoadInstruction.new(line, pointer_type, value)
   end
 
   def handle_data_to_special_variable
@@ -378,18 +407,33 @@ class Parser
       consume(RIGHT_PAREN, "Expect ')' after expression.")
       return Expr::Grouping.new(expr)
     end
-    if match(LEFT_BRACKET)
-      expr = expression
-      consume(RIGHT_BRACKET, "Expect ']' after expression.")
-      return Expr::Grouping.new(expr)
-    end
-    if match(USING)
-      expr = expression
-      return Expr::UsingType.new(expr)
-    end
+
     if match(CMD_ACTIVATION)
       return Expr::CmdActivation.new(previous.literal)
     end
+
+    if match(ARRAY_GROUP_OPERATOR) # This matches '@['
+      line = peek.line
+      consume(LEFT_BRACKET, "Expected '[' after '@' while grouping as array")
+      elements = []
+      while !check(RIGHT_BRACKET)
+        
+        if check(IDENTIFIER)
+          elements << peek.lexeme() # Append identifier
+          future(1)
+        else
+          elements << expression() # Append expression
+        end
+
+        if !check(COMMA)
+          break
+        end
+        consume(COMMA, "Expected ',' while separating array elements")
+      end
+      consume(RIGHT_BRACKET, "Expected this ']', a enclose group array")
+      return Expr::HiddenArrayGrouping.new(line, elements)
+    end
+
     error_token = peek
     error(error_token, "Expect expression.", @current)
   end

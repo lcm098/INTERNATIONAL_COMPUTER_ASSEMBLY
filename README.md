@@ -7,26 +7,26 @@ section .text ||
 
     mov ras, "Hello"  // move "Hello" string to ras (vs variable)
     load fptr, @[ras] // load vs-var as (array group) to function pointer
-    call write        // call write function to print it
+    call write, rdov        // call write function to print it
     unload fptr       // nice way to unload fptr, every time after load
 
     link arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     load fptr, @[arr]
-    call write
+    call write, rdov
     unload fptr
 
     link dict, {"ram":1, "shyam":2, "mohan":3}
     load fptr, @[dict]
-    call write
+    call write, rdov
     unload fptr
 
     link list, ["anoop", 1, false, nil]
     load fptr, @[list]
-    call write
+    call write, rdov
     unload fptr
 
     load fptr, @[age, gender] 
-    call read                  //call stander read for input  
+    call read, rdov                  //call stander read for input  
 
     // introduction ecx (which is result resolver variable)
 
@@ -37,13 +37,13 @@ section .text ||
     [
         link name
         load fptr, @["Hello ", name, " You Can Drive!"]
-        call write
+        call write, rdov
         unload fptr
     ]
     else is false
     [
         load fptr, @["Hello ", name, " You Can Not Drive"]
-        call write
+        call write, rdov
         unload fptr
     ]
 

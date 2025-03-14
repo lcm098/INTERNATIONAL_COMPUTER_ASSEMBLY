@@ -1,0 +1,10 @@
+
+
+section .text ||
+
+    mov ras, "Hello asm"
+    mov rbs, "ok"
+
+    load fptr, @[ras, rbs]
+
+||

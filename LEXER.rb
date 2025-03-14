@@ -7,10 +7,8 @@ DIV = "DIV"
 MOD = "MOD"
 CMP = "CMP"
 JMP = "JMP"
-FPTR = "FPTR"
 PUSH = "PUSH"
 POP = "POP"
-VPTR = "VPTR"
 LOAD = "LOAD"
 STORE = "STORE"
 UNLOAD = "ULOAD"
@@ -66,16 +64,17 @@ POPA = "POPA"
 CLSV = "CLSV" # clear variable
 LINK = "LINK"
 IS = "IS"
+ARRAY_GROUP_OPERATOR = "ARRAY_GROUP_OPERATOR"
 EOF = "EOF"  # Added missing EOF token type
 
 TOKEN_TYPES = [
     MOV, ADD, SUB, MUL, DIV, MOD, CMP, JMP,
-    CALL, FPTR, PUSH, POP, VPTR, LOAD, STORE, UNLOAD, UNSTORE,
+    CALL, PUSH, POP, LOAD, STORE, UNLOAD, UNSTORE,
     COLON, COMMA, DOT, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE,
     RIGHT_BRACE, LEFT_BRACKET, RIGHT_BRACKET, SECTION, GLOBAL, EXTERN, PUBLIC,
     TEXT, DATA, BSS, DOUBLE_OR, READ, WRITE, RETURN, EXEC, FIPTR, INC, DEC, LOOP,
     ADDRESS_OF_OPERATOR, CONDITIONAL_AND, BANG, CONDITIONAL_OR, BANG_EQUAL, EQUAL_EQUAL,
-    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV, LINK, IS
+    DATA_EQUAL, TRUE, FALSE, NIL, PUSHA, POPA, CLSV, LINK, IS, ARRAY_GROUP_OPERATOR
 ]
 
 KEYWORDS = {
@@ -100,10 +99,10 @@ KEYWORDS = {
     "mod" => MOD,
     "cmp" => CMP,
     "jmp" => JMP,
-    "fptr" => FPTR,
+    
     "push" => PUSH,
     "pop" => POP,
-    "vptr" => VPTR,
+
     "load" => LOAD,
     "store" => STORE,
     "unload" => UNLOAD,
@@ -301,6 +300,9 @@ class Lexer
             else
                 add_token(CONDITIONAL_OR)  # Handle single pipe case
             end
+        when "@"
+            add_token(ARRAY_GROUP_OPERATOR)
+            
         when "!"
             if match("=")
                 add_token(BANG_EQUAL)

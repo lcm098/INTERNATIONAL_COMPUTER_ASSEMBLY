@@ -42,10 +42,6 @@ class ExprVisitor
       raise NotImplementedError, "visit_cmd_activation_expr must be implemented by a subclass."
     end
   
-    def visit_using_type_expr(expr)
-      raise NotImplementedError, "visit_using_type_expr must be implemented by a subclass."
-    end
-  
     def accept(visitor)
       raise NotImplementedError, "Subclasses must implement accept method."
     end
@@ -56,6 +52,18 @@ class ExprVisitor
   
     def visit_float_expr(expr)
       raise NotImplementedError, "visit_float_expr must be implemented by a subclass."
+    end
+
+    def visit_data_seek(inst)
+      raise NotImplementedError, "visit_data_seek must be implemented by a subclass."
+    end
+
+    def visit_identifier(inst)
+      raise NotImplementedError, "visit_identifier must be implemented by a subclass."
+    end
+
+    def visit_hidden_array_grouping(inst)
+      raise NotImplementedError, "visit_hidden_array_grouping must be implemented by a subclass."
     end
   end
   
@@ -72,6 +80,48 @@ class ExprVisitor
   
     # Interpreter for evaluating expressions. Implements the visitor methods.
     
+    def visit_identifier(identifier)
+
+      begin
+        if environment.is_defined(identifier)
+          return environment.get(identifier)
+        else
+          return evaluate(identifier)
+        end
+      rescue => e
+        raise "undeclared identifier named '#{identifier}'. \n\t On Line =[#{line}]"
+      end
+    end
+
+    def visit_hidden_array_grouping(inst)
+      line = inst.line
+      elements = inst.elements
+      buffer = []
+
+      for index in 0 ... elements.length
+        buffer << visit_identifier(elements[index])
+      end
+
+      return buffer
+    end
+
+    def visit_load_instruction(inst)
+      line = inst.line
+      pointer_type = inst.pointer_type.lexeme
+      value = visit_identifier(inst.value)
+
+      if SpecialVariablesAndPointers.data_buffer_type.include?(pointer_type)
+        if pointer_type == FPTR
+          @environment.assign(RDO_VAR, {FPTR => value})
+          @environment.assign(FPTR, value)
+        elsif pointer_type == VPTR
+          @environment.assign(RDO_VAR, {VPTR => value})
+          @environment.assign(VPTR, value)
+      else
+        "Using unregistered special pointer named '#{special_var}' why?\n\t On Line =[#{line}]"
+      end
+    end
+
     def visit_data_seek(inst)
       @data_buff_type = SpecialVariablesAndPointers.new()
       special_var = inst.special_variable_type.lexeme
@@ -79,6 +129,7 @@ class ExprVisitor
 
       if SpecialVariablesAndPointers.data_buffer_type.include?(special_var)
         @environment.assign(special_var, special_val)
+        @environment.assign(RDO_VAR, special_val)
       else
         raise "Using unregistered special variable named '#{special_var}' why?\n\t On Line =[#{inst.line}]"
       end
@@ -195,10 +246,6 @@ class ExprVisitor
       evaluate(expr.expression)
     end
   
-    def visit_using_type_expr(expr)
-      "Type Id [#{expr.value.class.name}]"
-    end
-  
     def visit_cmd_activation_expr(expr)
       _command_buffer_ = Shellwords.split(expr.value)
       inter = CmdInter.new(_command_buffer_)
@@ -225,3 +272,4 @@ class ExprVisitor
       expr.accept(self)
     end
   end
+end
